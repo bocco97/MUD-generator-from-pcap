@@ -17,7 +17,12 @@ from datetime import datetime
 # p[p.transport_layer].dstport
 
 
-def createACL(name,list_type,resolved,unresolved):
+def createACL(name,list_type,resolved,unresolved,direction):
+
+    if direction == 0: #from local host to remote
+        dir = "destination"
+    else : #from remote host to local
+        dir = "source"
 
     list = {
         "name" : name,
@@ -61,7 +66,7 @@ def createACL(name,list_type,resolved,unresolved):
             "name" : name+"-"+str(i),
             "matches" : {
                 "ipv4":{
-                    "destination-ipv4-network" : address
+                    dir+"-ipv4-network" : address
                 },
                 protocol : {
                     "destination-port" : {
@@ -88,10 +93,16 @@ def createACL(name,list_type,resolved,unresolved):
 def main(args):
 
     try:
+        if args[1] == "-h" or args[1]=="--help":
+            print("Use: ' python3 Creator.py path_to_pcap_file path_to_save_mud_file [ip_addr] ' ")
+            return
         c = pyshark.FileCapture(args[1],display_filter='tcp || udp')
         save_path = args[2]
+    except FileNotFoundError:
+        print("Incorrect/invalid path for pcap file.")
+        return
     except:
-        print("Use:  python3 Creator.py path_to_pcap_file path_to_save_mud_file [ ip_addr] ")
+        print("Use: ' python3 Creator.py path_to_pcap_file path_to_save_mud_file [ip_addr] ' ")
         return
 
     date_and_time = datetime.now()
@@ -104,8 +115,11 @@ def main(args):
         IP = socket.gethostbyname(hostname)
 
     mud_path = save_path+"/"+hostname+"("+date_and_time.__str__()+")MUD.json"
-    mud_file = open(mud_path,'x')
-
+    try:
+        mud_file = open(mud_path,'x')
+    except:
+        print("Incorrect/invalid path for MUD file.")
+        return
 
     received = AddressTree()
     sent = AddressTree()
@@ -148,8 +162,8 @@ def main(args):
     from_name = "from-ipv4-"+hostname
     to_name = "to-ipv4-"+hostname
 
-    lista1 = createACL("from-ipv4-"+hostname,"ipv4-acl-type",resolved_ltr,unresolved_ltr)
-    lista2 = createACL("to-ipv4-" + hostname, "ipv4-acl-type", resolved_rtl, unresolved_rtl)
+    lista1 = createACL("from-ipv4-"+hostname,"ipv4-acl-type",resolved_ltr,unresolved_ltr,0)
+    lista2 = createACL("to-ipv4-" + hostname, "ipv4-acl-type", resolved_rtl, unresolved_rtl,1)
 
     mud = {
         "ietf-mud:mud": {

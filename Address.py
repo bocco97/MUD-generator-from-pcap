@@ -40,7 +40,10 @@ class Address():
                     elif self.byte4 < b4:
                         return -1
                     else:
-                        return 0
+                        if self.protocol==addr.protocol:
+                            return 0
+                        else:
+                            return -1
 
     def getBytes(self):
         return self.byte1,self.byte2,self.byte3,self.byte4
