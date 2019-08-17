@@ -35,52 +35,52 @@ def createACL(name,list_type,resolved,unresolved,direction):
         protocol = addr[2]
         port = addr[1]
         address = addr[0]
-        #for p in port:
-        element={
-            "name" : name+"-"+str(i),
-            "matches" : {
-                "ipv4":{
-                    "ietf-acldns:dst-dnsname" : address
-                },
-                protocol : {
-                    "destination-port" : {
-                        "operator" : "eq",
-                        "port" : port
+        for p in port:
+            element={
+                "name" : name+"-"+str(i),
+                "matches" : {
+                    "ipv4":{
+                        "ietf-acldns:dst-dnsname" : address
+                    },
+                    protocol : {
+                        "destination-port" : {
+                            "operator" : "eq",
+                            "port" : p
+                        }
                     }
+                },
+                "actions" : {
+                    "forwarding" : "accept"
                 }
-            },
-            "actions" : {
-                "forwarding" : "accept"
             }
-        }
-        i += 1
-        tmp.append(element)
+            i += 1
+            tmp.append(element)
 
 
     for addr in unresolved:
         protocol = addr[2]
         port = addr[1]
         address = addr[0]
-        #for p in port:
-        element={
-            "name" : name+"-"+str(i),
-            "matches" : {
-                "ipv4":{
-                    dir+"-ipv4-network" : address
-                },
-                protocol : {
-                    "destination-port" : {
-                        "operator" : "eq",
-                        "port" : port
+        for p in port:
+            element={
+                "name" : name+"-"+str(i),
+                "matches" : {
+                    "ipv4":{
+                        dir+"-ipv4-network" : address
+                    },
+                    protocol : {
+                        "destination-port" : {
+                            "operator" : "eq",
+                            "port" : p
+                        }
                     }
+                },
+                "actions" : {
+                    "forwarding" : "accept"
                 }
-            },
-            "actions" : {
-                "forwarding" : "accept"
             }
-        }
-        i += 1
-        tmp.append(element)
+            i += 1
+            tmp.append(element)
 
     new_l = {}
     new_l["ace"] = tmp
