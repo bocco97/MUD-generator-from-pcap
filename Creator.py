@@ -200,6 +200,6 @@ def main(args):
 
 
 
+main(sys.argv)
 
-if __name__!='main':
-    main(sys.argv)
+
