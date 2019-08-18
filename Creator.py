@@ -111,6 +111,7 @@ def main(args):
 
     if args.__len__()==4:
         IP = args[3]
+        hostname=args[3]
     else:
         IP = socket.gethostbyname(hostname)
 
