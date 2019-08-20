@@ -96,7 +96,7 @@ def main(args):
         if args[1] == "-h" or args[1]=="--help":
             print("Use: ' python3 Creator.py path_to_pcap_file path_to_save_mud_file [ip_addr] ' ")
             return
-        c = pyshark.FileCapture(args[1],display_filter='tcp || udp')
+        c = pyshark.FileCapture(args[1],display_filter='tcp || udp',keep_packets=False)
         save_path = args[2]
     except FileNotFoundError:
         print("Incorrect/invalid path for pcap file.")
@@ -106,12 +106,13 @@ def main(args):
         return
 
     date_and_time = datetime.now()
+
     resolver = dns.resolver.Resolver()
     hostname = socket.gethostname()
 
     if args.__len__()==4:
         IP = args[3]
-        hostname=args[3]
+        hostname = args[3]
     else:
         IP = socket.gethostbyname(hostname)
 
@@ -201,6 +202,5 @@ def main(args):
 
 
 
+
 main(sys.argv)
-
-
